@@ -1,0 +1,58 @@
+name: Daily news → LinkedIn drafts
+
+on:
+  schedule:
+    # 06:00 UTC ≈ 07:00 CET (Europe/Warsaw). During CEST (UTC+2) this is 08:00 local.
+    # The pipeline itself timestamps in UTC; adjust if you need exact CEST alignment.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run daily pipeline
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SEARCH_PROVIDER: ${{ secrets.SEARCH_PROVIDER }}
+          EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+          GROK_API_BASE: ${{ secrets.GROK_API_BASE }}
+          GROK_MODEL: ${{ secrets.GROK_MODEL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MODEL: ${{ secrets.CLAUDE_MODEL }}
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          EMPTY_DAY_EXIT_ZERO: ${{ secrets.EMPTY_DAY_EXIT_ZERO }}
+          TOP_ARTICLES: "10"
+          TOP_DRAFTS: "3"
+          DEDUPE_DAYS: "30"
+          TZ: Europe/Warsaw
+        run: python -m src.pipeline.run_daily
+
+      - name: Notify on workflow failure
+        if: failure()
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        run: |
+          python - <<'PY'
+          import os
+          from src.notify.webhook import notify_failure
+          notify_failure("GitHub Actions workflow failed", stage="github_actions")
+          PY
