@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 import uuid
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
@@ -27,6 +28,24 @@ from src.linkedin.oauth import (
 )
 from src.linkedin.publisher import LinkedInPublishError, publish_draft
 from src.notify.webhook import notify_failure
+
+
+@dataclass(frozen=True)
+class DraftView:
+    id: uuid.UUID
+    status: str
+    body: str
+    model_name: str
+    article_title: str
+
+
+@dataclass(frozen=True)
+class ArticleView:
+    title: str
+    url: str
+    quality_score: float
+    topics: str
+    snippet: str
 
 
 def _check_password() -> bool:
@@ -84,16 +103,15 @@ def _pipeline_status_panel() -> None:
             if run is None:
                 st.info("No pipeline runs yet.")
                 return
-            st.write(
-                {
-                    "status": run.status,
-                    "started_at": str(run.started_at),
-                    "finished_at": str(run.finished_at) if run.finished_at else None,
-                    "articles_saved": run.articles_saved,
-                    "drafts_created": run.drafts_created,
-                    "error_message": run.error_message,
-                }
-            )
+            payload = {
+                "status": run.status,
+                "started_at": str(run.started_at),
+                "finished_at": str(run.finished_at) if run.finished_at else None,
+                "articles_saved": run.articles_saved,
+                "drafts_created": run.drafts_created,
+                "error_message": run.error_message,
+            }
+        st.write(payload)
     except Exception as exc:
         st.warning(f"Could not load pipeline status: {exc}")
 
@@ -103,19 +121,30 @@ def _articles_today() -> None:
     try:
         with session_scope() as session:
             repo = Repository(session)
-            articles = repo.articles_for_date(date.today())
-            if not articles:
-                st.info("No articles stored for today.")
-                return
-            for article in articles:
-                st.markdown(
-                    f"**[{article.title}]({article.url})**  \n"
-                    f"Score: {article.quality_score:.2f} · Topics: `{article.topics}`  \n"
-                    f"{article.snippet[:280]}"
+            articles = [
+                ArticleView(
+                    title=a.title,
+                    url=a.url,
+                    quality_score=float(a.quality_score),
+                    topics=a.topics or "",
+                    snippet=a.snippet or "",
                 )
-                st.divider()
+                for a in repo.articles_for_date(date.today())
+            ]
     except Exception as exc:
         st.warning(f"Could not load articles: {exc}")
+        return
+
+    if not articles:
+        st.info("No articles stored for today.")
+        return
+    for article in articles:
+        st.markdown(
+            f"**[{article.title}]({article.url})**  \n"
+            f"Score: {article.quality_score:.2f} · Topics: `{article.topics}`  \n"
+            f"{article.snippet[:280]}"
+        )
+        st.divider()
 
 
 def _drafts_panel() -> None:
@@ -123,7 +152,19 @@ def _drafts_panel() -> None:
     try:
         with session_scope() as session:
             repo = Repository(session)
-            drafts = list(repo.list_drafts(limit=30))
+            # Copy fields inside the open session to avoid DetachedInstanceError
+            drafts = [
+                DraftView(
+                    id=d.id,
+                    status=d.status,
+                    body=d.body,
+                    model_name=d.model_name or "",
+                    article_title=(
+                        d.article.title if d.article is not None else "Unknown article"
+                    ),
+                )
+                for d in repo.list_drafts(limit=30)
+            ]
     except Exception as exc:
         st.warning(f"Could not load drafts: {exc}")
         return
@@ -133,8 +174,10 @@ def _drafts_panel() -> None:
         return
 
     for draft in drafts:
-        article_title = draft.article.title if draft.article else "Unknown article"
-        with st.expander(f"{draft.status.upper()} · {article_title}", expanded=draft.status == "pending"):
+        with st.expander(
+            f"{draft.status.upper()} · {draft.article_title}",
+            expanded=draft.status == "pending",
+        ):
             st.caption(f"Draft ID: `{draft.id}` · Model: `{draft.model_name}`")
             body_key = f"body_{draft.id}"
             new_body = st.text_area("Post body", value=draft.body, key=body_key, height=220)
@@ -174,11 +217,20 @@ def _settings_panel() -> None:
     try:
         with session_scope() as session:
             token = Repository(session).get_linkedin_token()
-        if token:
-            st.success(f"Connected as `{token.member_urn}`")
+            token_view = None
+            if token is not None:
+                token_view = {
+                    "member_urn": token.member_urn,
+                    "access_expires_at": str(token.access_expires_at),
+                    "refresh_expires_at": str(token.refresh_expires_at)
+                    if token.refresh_expires_at
+                    else None,
+                }
+        if token_view:
+            st.success(f"Connected as `{token_view['member_urn']}`")
             st.caption(
-                f"Access expires: {token.access_expires_at} · "
-                f"Refresh expires: {token.refresh_expires_at}"
+                f"Access expires: {token_view['access_expires_at']} · "
+                f"Refresh expires: {token_view['refresh_expires_at']}"
             )
         else:
             st.warning("LinkedIn is not connected.")

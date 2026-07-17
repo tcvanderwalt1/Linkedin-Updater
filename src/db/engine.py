@@ -40,7 +40,13 @@ def get_engine(database_url: str | None = None, *, force_new: bool = False) -> E
         return engine
 
     _engine = engine
-    _SessionLocal = sessionmaker(bind=_engine, autoflush=False, autocommit=False, future=True)
+    _SessionLocal = sessionmaker(
+        bind=_engine,
+        autoflush=False,
+        autocommit=False,
+        expire_on_commit=False,
+        future=True,
+    )
     return _engine
 
 
@@ -48,7 +54,13 @@ def get_session_factory(database_url: str | None = None) -> sessionmaker[Session
     global _SessionLocal
     if database_url is not None:
         engine = get_engine(database_url, force_new=True)
-        return sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+        return sessionmaker(
+            bind=engine,
+            autoflush=False,
+            autocommit=False,
+            expire_on_commit=False,
+            future=True,
+        )
     if _SessionLocal is None:
         get_engine()
     assert _SessionLocal is not None
