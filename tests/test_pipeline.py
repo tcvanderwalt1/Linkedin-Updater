@@ -87,31 +87,34 @@ def test_run_daily_success(mocker, settings):
 
     results = [
         SearchResult(
-            url="https://www.finextra.com/ai-ops",
+            url="https://www.finextra.com/newsarticle/123/ai-investment-operations",
             title="How generative AI is improving investment operations data quality",
             snippet=(
                 "Asset managers use enterprise AI to augment IBOR workflows and "
-                "strengthen risk transparency across institutional platforms."
+                "strengthen risk transparency across institutional platforms used by "
+                "pension funds and banks watching compliance and data quality closely."
             ),
             source="finextra.com",
         ),
         SearchResult(
-            url="https://www.reuters.com/fintech",
+            url="https://www.reuters.com/technology/fintech-raises-series-b-2026-07-01/",
             title="Fintech startup raises Series B to modernize wealth management workflows",
             snippet=(
                 "Institutional fintech improves compliance workflows for wealth managers "
-                "alongside existing core systems and venture funding news."
+                "alongside existing core systems as investors watch the funding round "
+                "and banks assess partnership strategy."
             ),
             source="reuters.com",
         ),
         SearchResult(
-            url="https://example.com/prop",
-            title="Proptech tools help commercial real estate investors improve portfolio transparency",
+            url="https://www.ft.com/content/cre-investors-rethink-2026",
+            title="Commercial real estate investors rethink portfolio strategy as rates shift",
             snippet=(
-                "Property investment teams adopt analytics that complement existing "
-                "asset management operations and reporting."
+                "Property investment teams and pension funds are adjusting commercial "
+                "real estate allocations, focusing on transparency, risk, and long-term "
+                "institutional portfolio construction across major markets."
             ),
-            source="example.com",
+            source="ft.com",
         ),
     ]
 

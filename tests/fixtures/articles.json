@@ -2,41 +2,47 @@
   {
     "url": "https://example.com/crypto-moon",
     "title": "Bitcoin to the moon — guaranteed 100x memecoin airdrop!",
-    "snippet": "Get rich with this shitcoin degen play. Like and share!",
+    "snippet": "Get rich with this shitcoin degen play. Like and share! This is thin engagement bait with no institutional substance for asset managers or banks.",
     "label": "spam_crypto"
   },
   {
-    "url": "https://example.com/paywall-tease",
+    "url": "https://example.com/paywall-tease/article",
     "title": "You won't believe what banks are doing next",
-    "snippet": "Subscribe to read the full story. Members-only paywall content.",
+    "snippet": "Subscribe to read the full story. Members-only paywall content about banking with no usable detail for readers who want real insight.",
     "label": "spam_paywall"
   },
   {
-    "url": "https://example.com/replace-simcorp",
+    "url": "https://example.com/replace-simcorp/post",
     "title": "Rip and replace your SimCorp IBOR tomorrow",
-    "snippet": "Kill your legacy IBOR and OMS with our platform.",
+    "snippet": "Kill your legacy IBOR and OMS with our platform. Book a demo and talk to sales about ripping out established investment operations stacks.",
     "label": "spam_hostile_legacy"
   },
   {
-    "url": "https://www.finextra.com/good-ai-ops",
+    "url": "https://vendor.example/product",
+    "title": "VTS | Commercial Real Estate Software",
+    "snippet": "Our AI platform for CRE. Book a demo today and transform weeks into minutes with the AI platform for investment operations teams.",
+    "label": "spam_vendor"
+  },
+  {
+    "url": "https://www.finextra.com/newsarticle/12345/how-generative-ai-is-improving-investment-operations",
     "title": "How generative AI is improving investment operations data quality",
-    "snippet": "Asset managers are using enterprise AI to augment IBOR workflows, strengthen risk transparency, and improve fund accounting data quality without disrupting established platforms.",
+    "snippet": "Asset managers are using enterprise AI to augment IBOR workflows, strengthen risk transparency, and improve fund accounting data quality without disrupting established platforms used by institutional investors.",
     "label": "keep_am_ai"
   },
   {
-    "url": "https://www.reuters.com/fintech-funding",
+    "url": "https://www.reuters.com/technology/fintech-startup-raises-series-b-2026-07-01/",
     "title": "Fintech startup raises Series B to modernize wealth management workflows",
-    "snippet": "The institutional fintech will help wealth managers improve compliance workflows and client reporting alongside existing core systems.",
+    "snippet": "The institutional fintech will help wealth managers improve compliance workflows and client reporting alongside existing core systems as banks and investors watch the funding round closely.",
     "label": "keep_fintech_vc"
   },
   {
-    "url": "https://example.com/proptech",
-    "title": "Proptech tools help commercial real estate investors improve portfolio transparency",
-    "snippet": "Property investment teams adopt analytics that complement existing asset management operations and reporting.",
+    "url": "https://www.ft.com/content/commercial-real-estate-investors-2026",
+    "title": "Commercial real estate investors rethink portfolio strategy as rates shift",
+    "snippet": "Property investment teams and pension funds are adjusting commercial real estate allocations, focusing on transparency, risk, and long-term institutional portfolio construction across major markets.",
     "label": "keep_property"
   },
   {
-    "url": "https://example.com/bait",
+    "url": "https://example.com/bait/post",
     "title": "Wow!!! Amazing!!! Click now!!!",
     "snippet": "Short tease",
     "label": "spam_bait"
