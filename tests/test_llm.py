@@ -12,6 +12,8 @@ from src.llm.prompts import SYSTEM_PROMPT, assert_simcorp_safe_constraints, buil
 def test_system_prompt_contains_simcorp_safe_contract():
     assert_simcorp_safe_constraints(SYSTEM_PROMPT)
     assert "hashtags" in SYSTEM_PROMPT.lower() or "Hashtags" in SYSTEM_PROMPT
+    assert "not sound like AI" in SYSTEM_PROMPT
+    assert "force multiplier" in SYSTEM_PROMPT  # banned phrasing guidance
 
 
 def test_user_prompt_includes_article_fields():
