@@ -1,0 +1,44 @@
+[
+  {
+    "url": "https://example.com/crypto-moon",
+    "title": "Bitcoin to the moon — guaranteed 100x memecoin airdrop!",
+    "snippet": "Get rich with this shitcoin degen play. Like and share!",
+    "label": "spam_crypto"
+  },
+  {
+    "url": "https://example.com/paywall-tease",
+    "title": "You won't believe what banks are doing next",
+    "snippet": "Subscribe to read the full story. Members-only paywall content.",
+    "label": "spam_paywall"
+  },
+  {
+    "url": "https://example.com/replace-simcorp",
+    "title": "Rip and replace your SimCorp IBOR tomorrow",
+    "snippet": "Kill your legacy IBOR and OMS with our platform.",
+    "label": "spam_hostile_legacy"
+  },
+  {
+    "url": "https://www.finextra.com/good-ai-ops",
+    "title": "How generative AI is improving investment operations data quality",
+    "snippet": "Asset managers are using enterprise AI to augment IBOR workflows, strengthen risk transparency, and improve fund accounting data quality without disrupting established platforms.",
+    "label": "keep_am_ai"
+  },
+  {
+    "url": "https://www.reuters.com/fintech-funding",
+    "title": "Fintech startup raises Series B to modernize wealth management workflows",
+    "snippet": "The institutional fintech will help wealth managers improve compliance workflows and client reporting alongside existing core systems.",
+    "label": "keep_fintech_vc"
+  },
+  {
+    "url": "https://example.com/proptech",
+    "title": "Proptech tools help commercial real estate investors improve portfolio transparency",
+    "snippet": "Property investment teams adopt analytics that complement existing asset management operations and reporting.",
+    "label": "keep_property"
+  },
+  {
+    "url": "https://example.com/bait",
+    "title": "Wow!!! Amazing!!! Click now!!!",
+    "snippet": "Short tease",
+    "label": "spam_bait"
+  }
+]
