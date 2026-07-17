@@ -65,3 +65,45 @@ def test_grok_timeout_raises_llm_error(mocker):
     client = LLMClient(settings)
     with pytest.raises(LLMError, match="timeout"):
         client.draft_linkedin_post(title="t", snippet="s", url="https://x")
+
+
+def test_gemini_draft_uses_system_instruction(mocker):
+    settings = Settings(
+        LLM_PROVIDER="gemini",
+        GEMINI_API_KEY="test-gemini-key",
+        GEMINI_MODEL="gemini-2.0-flash",
+    )
+    mock_resp = mocker.Mock()
+    mock_resp.status_code = 200
+    mock_resp.json.return_value = {
+        "candidates": [
+            {
+                "content": {
+                    "parts": [
+                        {
+                            "text": (
+                                "Forward-looking ops note\n\n"
+                                "#AssetManagement #AI #Fintech"
+                            )
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+    mock_resp.raise_for_status = mocker.Mock()
+    post = mocker.patch("src.llm.client.requests.post", return_value=mock_resp)
+
+    client = LLMClient(settings)
+    text = client.draft_linkedin_post(
+        title="Ops AI",
+        snippet="Empower IBOR teams",
+        url="https://example.com/ops",
+        topics="ai",
+    )
+    assert "AssetManagement" in text
+    assert client.model_name == "gemini-2.0-flash"
+    kwargs = post.call_args.kwargs
+    assert kwargs["params"]["key"] == "test-gemini-key"
+    assert "SimCorp" in kwargs["json"]["systemInstruction"]["parts"][0]["text"]
+    assert "gemini-2.0-flash" in post.call_args.args[0]

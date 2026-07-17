@@ -41,6 +41,8 @@ class Settings(BaseSettings):
     grok_model: str = Field(default="grok-2-latest", alias="GROK_MODEL")
     anthropic_api_key: str = Field(default="", alias="ANTHROPIC_API_KEY")
     claude_model: str = Field(default="claude-sonnet-4-20250514", alias="CLAUDE_MODEL")
+    gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
+    gemini_model: str = Field(default="gemini-2.0-flash", alias="GEMINI_MODEL")
 
     linkedin_client_id: str = Field(default="", alias="LINKEDIN_CLIENT_ID")
     linkedin_client_secret: str = Field(default="", alias="LINKEDIN_CLIENT_SECRET")
@@ -76,6 +78,8 @@ def _overlay_streamlit(settings: Settings) -> Settings:
         "GROK_MODEL": "grok_model",
         "ANTHROPIC_API_KEY": "anthropic_api_key",
         "CLAUDE_MODEL": "claude_model",
+        "GEMINI_API_KEY": "gemini_api_key",
+        "GEMINI_MODEL": "gemini_model",
         "LINKEDIN_CLIENT_ID": "linkedin_client_id",
         "LINKEDIN_CLIENT_SECRET": "linkedin_client_secret",
         "LINKEDIN_REDIRECT_URI": "linkedin_redirect_uri",
