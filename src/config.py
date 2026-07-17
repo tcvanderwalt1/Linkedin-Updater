@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str = Field(default="", alias="ANTHROPIC_API_KEY")
     claude_model: str = Field(default="claude-sonnet-4-20250514", alias="CLAUDE_MODEL")
     gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
-    gemini_model: str = Field(default="gemini-2.0-flash", alias="GEMINI_MODEL")
+    gemini_model: str = Field(default="gemini-flash-lite-latest", alias="GEMINI_MODEL")
 
     linkedin_client_id: str = Field(default="", alias="LINKEDIN_CLIENT_ID")
     linkedin_client_secret: str = Field(default="", alias="LINKEDIN_CLIENT_SECRET")
