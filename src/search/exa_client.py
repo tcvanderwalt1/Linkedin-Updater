@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any, Protocol
 from urllib.parse import urlparse
 
@@ -14,13 +14,36 @@ from src.config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
 
+# Bias toward mainstream / industry news people recognize — not vendor pages.
 FOCUS_QUERIES = [
-    "asset management IBOR ABOR operations technology",
-    "fintech institutional banking wealth management",
-    "commercial real estate property investment technology",
-    "enterprise AI asset managers operations",
-    "venture capital startups fintech funding",
-    "investment operations data quality risk transparency",
+    "asset managers pensions wealth management news analysis",
+    "fintech banking wealth management regulation funding news",
+    "commercial real estate investment market news",
+    "artificial intelligence asset management banks operations news",
+    "venture capital fintech startup funding round news",
+    "investment operations risk data quality institutional news",
+]
+
+# Prefer recognizable outlets at search time (Exa includeDomains).
+PREFERRED_DOMAINS = [
+    "ft.com",
+    "reuters.com",
+    "bloomberg.com",
+    "wsj.com",
+    "economist.com",
+    "cnbc.com",
+    "bbc.com",
+    "nytimes.com",
+    "forbes.com",
+    "businessinsider.com",
+    "finextra.com",
+    "waterstechnology.com",
+    "ignites.com",
+    "institutionalinvestor.com",
+    "pionline.com",
+    "ipe.com",
+    "techcrunch.com",
+    "axios.com",
 ]
 
 
@@ -59,11 +82,18 @@ class ExaClient:
             "x-api-key": self.api_key,
             "Content-Type": "application/json",
         }
-        payload = {
+        # Prefer recent news from known outlets.
+        start = (datetime.now(timezone.utc) - timedelta(days=14)).strftime(
+            "%Y-%m-%dT00:00:00.000Z"
+        )
+        payload: dict[str, Any] = {
             "query": query,
-            "type": "neural",
+            "type": "auto",
             "numResults": num_results,
-            "contents": {"text": {"maxCharacters": 500}},
+            "category": "news",
+            "includeDomains": PREFERRED_DOMAINS,
+            "startPublishedDate": start,
+            "contents": {"text": {"maxCharacters": 800}},
             "useAutoprompt": True,
         }
         response = requests.post(
@@ -72,6 +102,19 @@ class ExaClient:
             json=payload,
             timeout=self.timeout,
         )
+        # If Exa rejects category/domains combo, retry with domains only.
+        if response.status_code >= 400:
+            logger.warning(
+                "Exa search with news category failed (%s); retrying without category",
+                response.status_code,
+            )
+            payload.pop("category", None)
+            response = requests.post(
+                f"{self.base_url}/search",
+                headers=headers,
+                json=payload,
+                timeout=self.timeout,
+            )
         response.raise_for_status()
         data = response.json()
         results: list[SearchResult] = []
@@ -79,12 +122,21 @@ class ExaClient:
             text = ""
             if isinstance(item.get("text"), str):
                 text = item["text"]
+            published = None
+            if item.get("publishedDate"):
+                try:
+                    published = datetime.fromisoformat(
+                        str(item["publishedDate"]).replace("Z", "+00:00")
+                    )
+                except ValueError:
+                    published = None
             results.append(
                 SearchResult(
                     url=item.get("url") or "",
                     title=item.get("title") or item.get("url") or "Untitled",
-                    snippet=text[:500],
+                    snippet=text[:800],
                     source=urlparse(item.get("url") or "").netloc,
+                    published_at=published,
                     raw=item,
                 )
             )
@@ -106,8 +158,10 @@ class TavilyClient:
             "api_key": self.api_key,
             "query": query,
             "search_depth": "advanced",
+            "topic": "news",
             "include_answer": False,
             "max_results": num_results,
+            "include_domains": PREFERRED_DOMAINS,
         }
         response = requests.post(
             f"{self.base_url}/search",
@@ -122,7 +176,7 @@ class TavilyClient:
                 SearchResult(
                     url=item.get("url") or "",
                     title=item.get("title") or "Untitled",
-                    snippet=(item.get("content") or "")[:500],
+                    snippet=(item.get("content") or "")[:800],
                     source=urlparse(item.get("url") or "").netloc,
                     raw=item,
                 )
@@ -142,7 +196,7 @@ def fetch_industry_news(
     client: SearchClient | None = None,
     *,
     settings: Settings | None = None,
-    per_query: int = 5,
+    per_query: int = 8,
 ) -> list[SearchResult]:
     """Run focus queries and return de-duplicated URL list (pre-filter)."""
     s = settings or get_settings()
