@@ -38,6 +38,8 @@ jobs:
           GROK_MODEL: ${{ secrets.GROK_MODEL }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLAUDE_MODEL: ${{ secrets.CLAUDE_MODEL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
           EMPTY_DAY_EXIT_ZERO: ${{ secrets.EMPTY_DAY_EXIT_ZERO }}
           TOP_ARTICLES: "10"

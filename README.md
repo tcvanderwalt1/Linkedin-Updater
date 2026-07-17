@@ -5,7 +5,7 @@ $0/month serverless stack that:
 1. Runs daily via **GitHub Actions** (cron `0 6 * * *` UTC ≈ **07:00 CET**)
 2. Searches industry news with **Exa.ai** (or **Tavily**)
 3. Filters spam / engagement bait and keeps a SimCorp-safe Top 10 in **Neon Postgres**
-4. Drafts **3** positive LinkedIn posts with **Grok** or **Claude**
+4. Drafts **3** positive LinkedIn posts with **Gemini**, **Grok**, or **Claude**
 5. Lets you approve/edit/publish in a **Streamlit** UI via LinkedIn OAuth 2.0
 
 ## Architecture
@@ -16,7 +16,7 @@ $0/month serverless stack that:
 | Cron | GitHub Actions |
 | DB | Neon Serverless PostgreSQL (**no SQLite**) |
 | Search | Exa.ai / Tavily |
-| LLM | Grok (xAI) or Claude |
+| LLM | Gemini (Google), Grok (xAI), or Claude |
 | Publish | LinkedIn REST (`ugcPosts`) + OAuth refresh token in Neon |
 | Alerts | Slack/Discord webhook on failure or empty filter day |
 
