@@ -86,6 +86,7 @@ TRUSTED_HOSTS: tuple[str, ...] = (
 
 SPAM_PATTERNS = [
     r"\b(bitcoin|btc|ethereum|crypto\s*shill|memecoin|nft\s*drop|to the moon)\b",
+    r"\b(stablecoin|stable coin|defi|web3)\b",
     r"\b(guaranteed returns|100x|get rich)\b",
     r"(subscribe to (read|continue)|paywall|members[- ]only)",
     r"(you won.?t believe|clickbait|like and share|comment below)",
